@@ -1,0 +1,245 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ============================
+   TransportAI - Design System (Gruvbox Dark - High Contrast)
+   ============================ */
+
+/* Custom theme overrides */
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  /* Gruvbox Dark Palette - High Contrast Shift */
+  --color-brand-50: #fbf1c7;   /* fg0 (Highest contrast text) */
+  --color-brand-100: #ebdbb2;  /* fg1 */
+  --color-brand-200: #d5c4a1;  /* fg2 */
+  --color-brand-300: #bdae93;  /* fg3 */
+  --color-brand-400: #a89984;  /* fg4 */
+  --color-brand-500: #83a598;  /* Blue */
+  --color-brand-600: #458588;  /* Blue dark */
+  --color-brand-700: #076678;
+  --color-brand-800: #282828;  /* bg0 */
+  --color-brand-900: #1d2021;  /* bg0_h (Highest contrast bg) */
+  --color-brand-950: #000000;
+
+  --color-surface-50: #fbf1c7;
+  --color-surface-100: #ebdbb2;
+  --color-surface-200: #d5c4a1;
+  --color-surface-700: #3c3836; /* bg1 */
+  --color-surface-800: #282828; /* bg0 */
+  --color-surface-900: #1d2021; /* bg0_h */
+  --color-surface-950: #000000;
+
+  --color-risk-low: #b8bb26;    /* Green (Bright) */
+  --color-risk-medium: #fabd2f; /* Yellow (Bright) */
+  --color-risk-high: #fb4934;   /* Red (Bright) */
+
+  /* Additional Gruvbox Accents */
+  --color-gruv-orange: #fe8019;
+  --color-gruv-aqua: #8ec07c;
+  --color-gruv-purple: #d3869b;
+  --color-gruv-gray: #928374;
+}
+
+/* Base resets */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1d2021;
+  color: #fbf1c7; /* Brighter foreground */
+  min-height: 100vh;
+}
+
+/* Animated gradient background - More contrast in colors */
+.bg-animated {
+  background: linear-gradient(-45deg, #1d2021, #282828, #1d2021, #000000);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glass morphism card - Darker and sharper */
+.glass {
+  background: rgba(29, 32, 33, 0.85); /* More opaque */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 153, 132, 0.3); /* Sharper border */
+}
+
+.glass-light {
+  background: rgba(60, 56, 54, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 153, 132, 0.4);
+}
+
+/* Glow effects - More intense for pop */
+.glow-brand {
+  box-shadow: 0 0 30px rgba(131, 165, 152, 0.15), 0 0 60px rgba(131, 165, 152, 0.08);
+}
+
+.glow-green {
+  box-shadow: 0 0 30px rgba(184, 187, 38, 0.25), 0 0 60px rgba(184, 187, 38, 0.1);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 30px rgba(250, 189, 47, 0.25), 0 0 60px rgba(250, 189, 47, 0.1);
+}
+
+.glow-red {
+  box-shadow: 0 0 30px rgba(251, 73, 52, 0.25), 0 0 60px rgba(251, 73, 52, 0.1);
+}
+
+/* Pulse animation for risk indicator */
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  80%, 100% { transform: scale(1.4); opacity: 0; }
+}
+
+.pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Score gauge animation */
+@keyframes fillGauge {
+  from { stroke-dashoffset: 283; }
+}
+
+.gauge-fill {
+  animation: fillGauge 1.5s ease-out forwards;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Custom scrollbar - Higher contrast */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1d2021;
+}
+::-webkit-scrollbar-thumb {
+  background: #665c54; /* Brighter gray */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a89984;
+}
+
+/* Tooltip */
+.tooltip-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip-container .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: normal;
+  width: 220px;
+  background: #282828; /* bg0 for contrast */
+  color: #fbf1c7;
+  border: 1px solid rgba(168, 153, 132, 0.5);
+  z-index: 50;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+}
+
+.tooltip-container .tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #282828 transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Shine sweep effect - Higher contrast Gold */
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.text-shine {
+  background: linear-gradient(
+    90deg,
+    #ebdbb2 0%,
+    #fbf1c7 25%,
+    #ebdbb2 50%,
+    #d5c4a1 75%,
+    #ebdbb2 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shine 3s linear infinite;
+}
+
+/* Button hover effect */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(251, 241, 199, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
