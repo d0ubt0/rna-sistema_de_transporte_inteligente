@@ -87,7 +87,7 @@ de fortalezas y debilidades de cada enfoque. -->
 
 <!-- COLOQUE AQUÍ LAS FIGURAS DE EVALUACIÓN DE CADA MÓDULO -->
 
-## 5. Análisis de riesgo e interpretabilidad
+## 5. Análisis de importancia e interpretabilidad
 
 <!-- AQUÍ: Análisis de importancia de variables para el módulo de predicción de demanda.
 Interpretabilidad de los modelos CNN mediante técnicas como Grad-CAM o LIME.

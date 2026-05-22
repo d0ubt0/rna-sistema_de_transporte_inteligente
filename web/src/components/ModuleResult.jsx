@@ -249,8 +249,8 @@ const RecommendationResult = ({ result }) => {
                   {dest.category}
                 </span>
                 <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-risk-medium" />
-                  <span className="text-xs text-risk-medium font-semibold">{dest.match}%</span>
+                  <Star className="w-3 h-3 text-status-warn" />
+                  <span className="text-xs text-status-warn font-semibold">{dest.match}%</span>
                 </div>
               </div>
             </div>
@@ -261,7 +261,7 @@ const RecommendationResult = ({ result }) => {
   );
 };
 
-const RiskResult = forwardRef(({ demandResult, classificationResult, recommendationResult, moduleTab }, ref) => {
+const ModuleResult = forwardRef(({ demandResult, classificationResult, recommendationResult, moduleTab }, ref) => {
   const hasDemand = moduleTab === 'demand' && demandResult;
   const hasClassification = moduleTab === 'classification' && classificationResult;
   const hasRecommendation = moduleTab === 'recommendation' && recommendationResult;
@@ -277,5 +277,5 @@ const RiskResult = forwardRef(({ demandResult, classificationResult, recommendat
   );
 });
 
-RiskResult.displayName = 'RiskResult';
-export default RiskResult;
+ModuleResult.displayName = 'ModuleResult';
+export default ModuleResult;

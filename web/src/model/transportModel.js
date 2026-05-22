@@ -69,7 +69,7 @@ export const DESTINATIONS = [
   { id: 'd10', name: 'Mercado Municipal', icon: '🏪', match: 80, category: 'Comercio' },
 ];
 
-export function recommendDestinations(clientId) {
+export function recommendDestinations(_clientId) {
   const shuffled = [...DESTINATIONS].sort(() => Math.random() - 0.5);
   const numRecs = 3 + Math.floor(Math.random() * 3);
   return shuffled.slice(0, numRecs).map((d) => ({
@@ -79,30 +79,17 @@ export function recommendDestinations(clientId) {
 }
 
 export const FEATURE_IMPORTANCE = [
-  { name: "Demanda Histórica", key: "last_pymnt_amnt", importance: 0.321 },
-  { name: "Incidentes Viales", key: "recoveries", importance: 0.265 },
-  { name: "Capacidad de Rutas", key: "out_prncp", importance: 0.184 },
-  { name: "Tasa de Ocupación", key: "int_rate", importance: 0.058 },
-  { name: "Tiempo de Espera", key: "total_rec_late_fee", importance: 0.045 },
-  { name: "Flujo de Pasajeros", key: "tot_cur_bal", importance: 0.038 },
-  { name: "Eficiencia Operativa", key: "dti", importance: 0.031 },
-  { name: "Tipo de Ruta", key: "initial_list_status", importance: 0.029 },
-  { name: "Distancia Recorrida", key: "loan_amnt", importance: 0.019 },
-  { name: "Periodo (30/90 Días)", key: "term", importance: 0.010 },
+  { name: "Demanda Histórica", key: "hist_demand", importance: 0.321 },
+  { name: "Incidentes Viales", key: "road_incidents", importance: 0.265 },
+  { name: "Capacidad de Rutas", key: "route_capacity", importance: 0.184 },
+  { name: "Tasa de Ocupación", key: "occupancy_rate", importance: 0.058 },
+  { name: "Tiempo de Espera", key: "waiting_time", importance: 0.045 },
+  { name: "Flujo de Pasajeros", key: "passenger_flow", importance: 0.038 },
+  { name: "Eficiencia Operativa", key: "op_efficiency", importance: 0.031 },
+  { name: "Tipo de Ruta", key: "route_type", importance: 0.029 },
+  { name: "Distancia Recorrida", key: "travel_distance", importance: 0.019 },
+  { name: "Periodo (30/90 Días)", key: "time_period", importance: 0.010 },
 ];
-
-export const SCORE_RANGES = [
-  { min: 300, max: 499, label: "Crítico", color: "#fb4934" },
-  { min: 500, max: 579, label: "Bajo", color: "#fe8019" },
-  { min: 580, max: 669, label: "Regular", color: "#fabd2f" },
-  { min: 670, max: 739, label: "Bueno", color: "#b8bb26" },
-  { min: 740, max: 799, label: "Muy Bueno", color: "#8ec07c" },
-  { min: 800, max: 850, label: "Excelente", color: "#83a598" },
-];
-
-export function getScoreCategory(score) {
-  return SCORE_RANGES.find((r) => score >= r.min && score <= r.max) || SCORE_RANGES[0];
-}
 
 export async function checkServerHealth() {
   return true;

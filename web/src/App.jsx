@@ -1,15 +1,15 @@
 import { Sparkles } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import AboutModel from './components/AboutModel';
-import CreditForm from './components/CreditForm';
 import FeatureImportance from './components/FeatureImportance';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
 import Resources from './components/Resources';
-import RiskResult from './components/RiskResult';
 import ReadmeViewer from './components/ReadmeViewer';
-import { predictDemand, classifyDriver, recommendDestinations, checkServerHealth } from './model/transportModel';
+import SystemForm from './components/SystemForm';
+import ModuleResult from './components/ModuleResult';
+import { predictDemand, classifyDriver, recommendDestinations } from './model/transportModel';
 
 export default function App() {
   const [demandResult, setDemandResult] = useState(null);
@@ -19,7 +19,7 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const resultRef = useRef(null);
   const [showDocs, setShowDocs] = useState(false);
-  const [serverStatus, setServerStatus] = useState('checking');
+  const [serverStatus] = useState('checking');
 
   const handlePredictDemand = useCallback(async (routeId, tab) => {
     setModuleTab(tab || 'demand');
@@ -83,7 +83,7 @@ export default function App() {
 
       <Hero serverStatus={serverStatus} />
 
-      <section id="evaluacion" className="py-24 px-4 sm:px-6">
+      <section id="modulos" className="py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-light mb-4">
@@ -102,7 +102,7 @@ export default function App() {
           </div>
 
           <div className="glass rounded-3xl p-6 sm:p-8 glow-brand mb-8">
-            <CreditForm
+            <SystemForm
               onPredictDemand={handlePredictDemand}
               onClassifyDriver={handleClassifyDriver}
               onRecommendDestinations={handleRecommendDestinations}
@@ -111,7 +111,7 @@ export default function App() {
             />
           </div>
 
-          <RiskResult
+          <ModuleResult
             ref={resultRef}
             demandResult={demandResult}
             classificationResult={classificationResult}

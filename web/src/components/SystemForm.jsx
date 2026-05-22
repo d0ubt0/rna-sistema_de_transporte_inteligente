@@ -16,7 +16,7 @@ const TABS = [
   { id: 'recommendation', label: 'Recomendación de Destinos', icon: MapPin },
 ];
 
-export default function CreditForm({
+export default function SystemForm({
   onPredictDemand,
   onClassifyDriver,
   onRecommendDestinations,

@@ -5,33 +5,21 @@
  * Primer bloque visual que el usuario ve.
  * Incluye CTA para explorar el sistema de transporte inteligente.
  */
-import { ArrowDown, Shield, BarChart3, Brain } from 'lucide-react';
+import { ArrowDown, Shield, Brain } from 'lucide-react';
 
 export default function Hero({ serverStatus }) {
-  const scrollToEval = () => {
-    document.getElementById('evaluacion')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToModules = () => {
+    document.getElementById('modulos')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const getStatusConfig = () => {
     switch (serverStatus) {
       case 'online':
-        return {
-          color: 'bg-risk-low',
-          text: 'Sistema de Deep Learning Activado',
-          textColor: 'text-brand-300'
-        };
+        return { color: 'bg-status-ok', text: 'Sistema de Deep Learning Activado', textColor: 'text-brand-300' };
       case 'offline':
-        return {
-          color: 'bg-risk-high',
-          text: 'Servidor fuera de línea',
-          textColor: 'text-red-400'
-        };
-      default: // checking
-        return {
-          color: 'bg-risk-medium',
-          text: 'Cargando Red Neuronal...',
-          textColor: 'text-brand-300/70'
-        };
+        return { color: 'bg-status-error', text: 'Servidor fuera de linea', textColor: 'text-red-400' };
+      default:
+        return { color: 'bg-status-warn', text: 'Cargando Red Neuronal...', textColor: 'text-brand-300/70' };
     }
   };
 
@@ -78,7 +66,7 @@ export default function Hero({ serverStatus }) {
         {/* CTA Button */}
         <div className="animate-fade-in-up-delay-2">
           <button
-            onClick={scrollToEval}
+            onClick={scrollToModules}
             className="btn-primary inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-600 to-brand-500 
             text-white font-semibold text-lg rounded-2xl hover:from-brand-500 hover:to-brand-400 
             transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/25 cursor-pointer"

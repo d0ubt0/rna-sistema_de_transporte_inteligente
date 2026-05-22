@@ -10,7 +10,7 @@ import { Brain, Menu, X } from 'lucide-react';
 
 const navLinks = [
   { id: 'inicio', label: 'Inicio' },
-  { id: 'evaluacion', label: 'Evaluación' },
+  { id: 'modulos', label: 'Módulos' },
   { id: 'acerca', label: 'Acerca del Modelo' },
   { id: 'recursos', label: 'Recursos' },
   { id: 'documentacion', label: 'Documentación' },

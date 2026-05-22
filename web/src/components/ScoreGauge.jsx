@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getScoreCategory } from '../model/transportModel';
 
-export default function ScoreGauge({ score, riskColor }) {
-  const [animatedScore, setAnimatedScore] = useState(300);
-  const category = getScoreCategory(score);
+export default function CapacityGauge({ value, maxValue = 100, label = 'Capacidad', gaugeColor = '#83a598' }) {
+  const [animatedValue, setAnimatedValue] = useState(0);
 
   useEffect(() => {
     const duration = 1500;
-    const start = 300;
-    const end = score;
+    const start = 0;
+    const end = Math.min(value, maxValue);
     const startTime = Date.now();
 
     const animate = () => {
@@ -16,16 +14,16 @@ export default function ScoreGauge({ score, riskColor }) {
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(start + (end - start) * eased);
-      setAnimatedScore(current);
+      setAnimatedValue(current);
       if (progress < 1) requestAnimationFrame(animate);
     };
 
     requestAnimationFrame(animate);
-  }, [score]);
+  }, [value, maxValue]);
 
   const radius = 90;
   const circumference = 2 * Math.PI * radius;
-  const normalizedScore = (score - 300) / 550;
+  const normalizedScore = animatedValue / maxValue;
   const dashOffset = circumference * (1 - normalizedScore * 0.75);
 
   return (
@@ -48,39 +46,39 @@ export default function ScoreGauge({ score, riskColor }) {
             cy="100"
             r={radius}
             fill="none"
-            stroke={riskColor}
+            stroke={gaugeColor}
             strokeWidth="14"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
             className="gauge-fill transition-all duration-1000"
-            style={{ filter: `drop-shadow(0 0 8px ${riskColor}66)` }}
+            style={{ filter: `drop-shadow(0 0 8px ${gaugeColor}66)` }}
           />
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-5xl font-black text-white animate-count" style={{ color: riskColor }}>
-            {animatedScore}
+          <span className="text-5xl font-black text-white animate-count" style={{ color: gaugeColor }}>
+            {animatedValue}
           </span>
-          <span className="text-sm font-medium text-surface-200/60 mt-1">de 850</span>
+          <span className="text-sm font-medium text-surface-200/60 mt-1">de {maxValue}</span>
         </div>
       </div>
 
       <div
         className="mt-4 px-5 py-2 rounded-full text-sm font-semibold"
         style={{
-          backgroundColor: `${category.color}15`,
-          color: category.color,
-          border: `1px solid ${category.color}30`,
+          backgroundColor: `${gaugeColor}15`,
+          color: gaugeColor,
+          border: `1px solid ${gaugeColor}30`,
         }}
       >
-        {category.label}
+        {label}
       </div>
 
       <div className="flex justify-between w-full max-w-[220px] mt-3 text-xs text-surface-200/40">
-        <span>300</span>
-        <span>575</span>
-        <span>850</span>
+        <span>0</span>
+        <span>{Math.round(maxValue / 2)}</span>
+        <span>{maxValue}</span>
       </div>
     </div>
   );
