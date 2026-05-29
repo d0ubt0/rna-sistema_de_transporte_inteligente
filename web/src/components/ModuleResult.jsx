@@ -18,6 +18,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  ReferenceLine,
 } from 'recharts';
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -26,9 +27,11 @@ const ChartTooltip = ({ active, payload, label }) => {
       <div className="glass rounded-xl p-3 text-sm border border-brand-500/30">
         <p className="font-semibold text-white mb-1">Día {label}</p>
         {payload.map((entry) => (
-          <p key={entry.name} style={{ color: entry.color }} className="text-xs">
-            {entry.name}: {entry.value.toLocaleString()} pax
-          </p>
+          entry.value != null && (
+            <p key={entry.name} style={{ color: entry.color }} className="text-xs">
+              {entry.name === 'real' ? 'Demanda Real' : 'Predicción'}: {entry.value.toLocaleString()} pax
+            </p>
+          )
         ))}
       </div>
     );
@@ -63,7 +66,7 @@ const DemandResult = ({ result }) => {
           Predicción de Demanda: {routeName}
         </h3>
         <p className="text-sm text-surface-200/40 mb-6">
-          Demanda Real vs. Predicción del modelo LSTM a 30 días
+          30 días históricos + 30 días predicción del modelo LSTM
         </p>
 
         <div className="h-72 sm:h-80">
@@ -80,8 +83,10 @@ const DemandResult = ({ result }) => {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(168,153,132,0.15)" vertical={false} />
+              <ReferenceLine x={30.5} stroke="#fe8019" strokeDasharray="6 3" strokeWidth={2} label={{ value: 'Predicción →', position: 'insideTopRight', fill: '#fe8019', fontSize: 12 }} />
               <XAxis
                 dataKey="day"
+                ticks={[1, 10, 20, 30, 40, 50, 60]}
                 tick={{ fill: '#ebdbb2', fontSize: 11 }}
                 axisLine={{ stroke: 'rgba(168,153,132,0.3)' }}
                 tickLine={false}

@@ -10,7 +10,9 @@ app = FastAPI(
 
 # URLs permitidas
 origins = [
-    "https://sistema-transporte-inteligente-rna.netlify.app"
+    "https://sistema-transporte-inteligente-rna.netlify.app",
+    "http://localhost:5173",
+    "http://localhost:5174",
 ]
 
 app.add_middleware(

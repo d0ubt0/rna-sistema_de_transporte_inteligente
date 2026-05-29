@@ -83,22 +83,33 @@ export async function predictDemand(routeId) {
   );
   const predictedValues = apiResult.predicciones;
 
-  // build 30-day chart: real vs predicted for the same 30-day window
-  const days = targetRows.map((r, i) => {
+  // build 60-day chart: 30 previous real values + 30 real vs predicted
+  const prevDays = recent.slice(0, 30).map((r, i) => {
     const date = new Date(r.fecha);
     return {
       day: i + 1,
+      date: date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
+      real: r.pasajeros,
+    };
+  });
+
+  const predDays = targetRows.map((r, i) => {
+    const date = new Date(r.fecha);
+    return {
+      day: i + 31,
       date: date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
       real: r.pasajeros,
       predicted: Math.round(predictedValues[i]),
     };
   });
 
+  const days = [...prevDays, ...predDays];
+
   const rmse = Math.round(
-    Math.sqrt(days.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / days.length),
+    Math.sqrt(predDays.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / predDays.length),
   );
   const mae = Math.round(
-    days.reduce((sum, d) => sum + Math.abs(d.real - d.predicted), 0) / days.length,
+    predDays.reduce((sum, d) => sum + Math.abs(d.real - d.predicted), 0) / predDays.length,
   );
 
   return { days, rmse, mae, routeName };
