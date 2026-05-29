@@ -87,6 +87,7 @@ const DemandResult = ({ result }) => {
                 tickLine={false}
               />
               <YAxis
+                domain={[0, 3500]}
                 tick={{ fill: '#ebdbb2', fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}

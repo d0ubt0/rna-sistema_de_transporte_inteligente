@@ -44,18 +44,18 @@ async function loadCsv() {
 
 export async function predictDemand(routeId) {
   const allRows = await loadCsv();
-  const routeName = ROUTES.find((r) => r.id === routeId)?.name ?? 'Ruta A';
+  const routeName = ROUTES.find((r) => r.id === Number(routeId))?.name ?? 'Ruta A';
   const routeRows = allRows
     .filter((r) => r.ruta === routeName)
     .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-  // last 31 rows: 30 for input + 1 for the "real" future value
-  const recent = routeRows.slice(-31);
-  if (recent.length < 31) {
+  // need 60 rows: last 30 for input + 30 to predict
+  const recent = routeRows.slice(-60);
+  if (recent.length < 60) {
     throw new Error(`No hay suficientes datos históricos para ${routeName}`);
   }
 
-  // build 30×4 normalized sequence from first 30 rows
+  // first 30 rows = input sequence (30 days before the prediction window)
   const sequence = recent.slice(0, 30).map((r) => [
     normFeature(r.dia_semana, 0),
     normFeature(r.mes, 1),
@@ -63,25 +63,36 @@ export async function predictDemand(routeId) {
     (r.pasajeros - PAS_MIN) / (PAS_MAX - PAS_MIN),
   ]);
 
-  // clima_id comes from the prediction day (31st row)
-  const climaId = CLIMA_MAP[recent[30].clima] ?? 1;
+  // next 30 rows = target days to predict
+  const targetRows = recent.slice(30, 60);
 
-  const apiResult = await fetchDemandPrediction(sequence, routeId, climaId);
-  const predictedAbs = apiResult.prediccion_pasajeros;
+  // normalized features + clima for each future step
+  const futureFeatures = targetRows.map((r) => [
+    normFeature(r.dia_semana, 0),
+    normFeature(r.mes, 1),
+    normFeature(r.festivo, 2),
+  ]);
+  const futureClimaIds = targetRows.map((r) => CLIMA_MAP[r.clima] ?? 1);
 
-  // build 30-day chart data
-  const days = [];
-  for (let i = 0; i < 30; i++) {
-    const date = new Date(recent[i].fecha);
-    const real = recent[i].pasajeros;
-    const predicted = i < 29 ? real : Math.round(predictedAbs);
-    days.push({
+  const apiResult = await fetchDemandPrediction(
+    sequence,
+    routeId,
+    futureClimaIds[0],
+    futureFeatures,
+    futureClimaIds,
+  );
+  const predictedValues = apiResult.predicciones;
+
+  // build 30-day chart: real vs predicted for the same 30-day window
+  const days = targetRows.map((r, i) => {
+    const date = new Date(r.fecha);
+    return {
       day: i + 1,
       date: date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
-      real,
-      predicted,
-    });
-  }
+      real: r.pasajeros,
+      predicted: Math.round(predictedValues[i]),
+    };
+  });
 
   const rmse = Math.round(
     Math.sqrt(days.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / days.length),

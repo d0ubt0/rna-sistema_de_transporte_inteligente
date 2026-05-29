@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import demand, distraction, recommender
+from routers import demand
 
 app = FastAPI(
     title="Sistema Inteligente de Transporte",
@@ -8,18 +8,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configuración de CORS para permitir conexiones desde un frontend web
+# URLs permitidas
+origins = [
+    "https://sistema-transporte-inteligente-rna.netlify.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Inclusión de módulos (Routers)
+# Routers
 app.include_router(demand.router)
-app.include_router(distraction.router)
-app.include_router(recommender.router)
 
 @app.get("/")
 async def root():

@@ -1,15 +1,14 @@
 import { Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AboutModel from './components/AboutModel';
-import FeatureImportance from './components/FeatureImportance';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
-import Navbar from './components/Navbar';
-import Resources from './components/Resources';
-import ReadmeViewer from './components/ReadmeViewer';
-import SystemForm from './components/SystemForm';
 import ModuleResult from './components/ModuleResult';
-import { predictDemand, classifyDriver, recommendDestinations, checkServerHealth } from './model/transportModel';
+import Navbar from './components/Navbar';
+import ReadmeViewer from './components/ReadmeViewer';
+import Resources from './components/Resources';
+import SystemForm from './components/SystemForm';
+import { checkServerHealth, classifyDriver, predictDemand, recommendDestinations } from './model/transportModel';
 
 export default function App() {
   const [demandResult, setDemandResult] = useState(null);
@@ -128,11 +127,7 @@ export default function App() {
             moduleTab={moduleTab}
           />
 
-          {demandResult && (
-            <div className="mt-8">
-              <FeatureImportance />
-            </div>
-          )}
+
         </div>
       </section>
 

@@ -1,14 +1,29 @@
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
-export async function fetchDemandPrediction(sequence, routeId, climaId) {
+export async function fetchDemandPrediction(
+  sequence,
+  routeId,
+  climaId,
+  futureFeatures = null,
+  futureClimaIds = null,
+) {
+  const body = {
+    sequence,
+    route_id: routeId,
+    steps: futureClimaIds ? futureClimaIds.length : 1,
+  };
+
+  if (futureFeatures && futureClimaIds) {
+    body.future_features = futureFeatures;
+    body.future_clima_ids = futureClimaIds;
+  } else {
+    body.clima_id = climaId;
+  }
+
   const res = await fetch(`${API_BASE}/demand/predict`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sequence,
-      route_id: routeId,
-      clima_id: climaId,
-    }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

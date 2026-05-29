@@ -4,7 +4,7 @@
  * ============================================
  * Explica los tres módulos del sistema de transporte inteligente.
  */
-import { Brain, Database, Target, Cpu, BookOpen, Network } from 'lucide-react';
+import { BookOpen, Brain, Cpu, Database } from 'lucide-react';
 
 const features = [
   {
@@ -73,7 +73,7 @@ export default function AboutModel() {
           ))}
         </div>
 
-        {/* Architecture diagram placeholder */}
+        {/* Architecture diagram placeholder
         <div className="mt-16 glass rounded-3xl p-8 text-center">
           <h3 className="text-xl font-bold text-white mb-4">Flujo del Sistema</h3>
           <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap py-8">
@@ -101,7 +101,7 @@ export default function AboutModel() {
           <p className="text-xs text-surface-200/40 mt-4">
             RMSE, MAE (Demanda) | Accuracy, F1-Score (Conducción) | Precision, Recall (Recomendación)
           </p>
-        </div>
+        </div> */}
       </div>
     </section>
   );

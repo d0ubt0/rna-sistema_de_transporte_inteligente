@@ -54,7 +54,7 @@ class TransportLSTM(nn.Module):
 # ============================================================
 # FUNCIÓN DE CARGA GLOBAL
 # ============================================================
-MODEL_DIR = os.path.join("api", "models", "demand")
+MODEL_DIR = os.path.join("models", "demand")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Variables globales para el Singleton
