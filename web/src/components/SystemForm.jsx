@@ -24,7 +24,7 @@ export default function SystemForm({
   activeModule,
 }) {
   const [tab, setTab] = useState(activeModule || 'demand');
-  const [selectedRoute, setSelectedRoute] = useState('r1');
+  const [selectedRoute, setSelectedRoute] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState(null);
   const [clientId, setClientId] = useState('');
@@ -44,7 +44,7 @@ export default function SystemForm({
   };
 
   const handleDemandReset = () => {
-    setSelectedRoute('r1');
+    setSelectedRoute(0);
   };
 
   const handleFileDrop = (e) => {

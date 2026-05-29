@@ -1,5 +1,5 @@
 import { Sparkles } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import AboutModel from './components/AboutModel';
 import FeatureImportance from './components/FeatureImportance';
 import Footer from './components/Footer';
@@ -9,7 +9,7 @@ import Resources from './components/Resources';
 import ReadmeViewer from './components/ReadmeViewer';
 import SystemForm from './components/SystemForm';
 import ModuleResult from './components/ModuleResult';
-import { predictDemand, classifyDriver, recommendDestinations } from './model/transportModel';
+import { predictDemand, classifyDriver, recommendDestinations, checkServerHealth } from './model/transportModel';
 
 export default function App() {
   const [demandResult, setDemandResult] = useState(null);
@@ -19,15 +19,24 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const resultRef = useRef(null);
   const [showDocs, setShowDocs] = useState(false);
-  const [serverStatus] = useState('checking');
+  const [serverStatus, setServerStatus] = useState('checking');
+
+  useEffect(() => {
+    checkServerHealth().then((online) => {
+      setServerStatus(online ? 'online' : 'offline');
+    });
+  }, []);
 
   const handlePredictDemand = useCallback(async (routeId, tab) => {
     setModuleTab(tab || 'demand');
-    if (!routeId) return;
+    if (routeId === null || routeId === undefined) return;
     setIsProcessing(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    const result = predictDemand(routeId);
-    setDemandResult(result);
+    try {
+      const result = await predictDemand(routeId);
+      setDemandResult(result);
+    } catch {
+      setDemandResult(null);
+    }
     setIsProcessing(false);
     setTimeout(() => {
       resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });

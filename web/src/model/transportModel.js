@@ -1,40 +1,94 @@
+import { fetchDemandPrediction } from '../services/api';
+
 export const ROUTES = [
-  { id: 'r1', name: 'Ruta 1: Centro - Norte' },
-  { id: 'r2', name: 'Ruta 2: Centro - Sur' },
-  { id: 'r3', name: 'Ruta 3: Oriente - Poniente' },
-  { id: 'r4', name: 'Ruta 4: Periférico' },
-  { id: 'r5', name: 'Ruta 5: Aeropuerto - Centro' },
-  { id: 'r6', name: 'Ruta 6: Terminal - Universidad' },
+  { id: 0, name: 'Ruta A' },
+  { id: 1, name: 'Ruta B' },
+  { id: 2, name: 'Ruta C' },
+  { id: 3, name: 'Ruta D' },
+  { id: 4, name: 'Ruta E' },
 ];
 
-export function predictDemand(routeId) {
-  const days = [];
-  const now = new Date();
-  let base = 3000 + Math.random() * 7000;
+const CLIMA_MAP = { 'Lluvia': 0, 'Nublado': 1, 'Soleado': 2 };
 
+const FS_MIN = [0, 1, 0];
+const FS_MAX = [6, 12, 1];
+const PAS_MIN = 346;
+const PAS_MAX = 4039;
+
+function normFeature(val, colIdx) {
+  return (val - FS_MIN[colIdx]) / (FS_MAX[colIdx] - FS_MIN[colIdx]);
+}
+
+let cachedCsv = null;
+
+async function loadCsv() {
+  if (cachedCsv) return cachedCsv;
+  const res = await fetch('/data/demanda_transporte.csv');
+  const text = await res.text();
+  const lines = text.trim().split('\n');
+  const rows = lines.slice(1).map((line) => {
+    const c = line.split(',');
+    return {
+      fecha: c[0],
+      ruta: c[1],
+      pasajeros: parseInt(c[2], 10),
+      dia_semana: parseInt(c[4], 10),
+      mes: parseInt(c[5], 10),
+      festivo: parseInt(c[6], 10),
+      clima: c[7].trim(),
+    };
+  });
+  cachedCsv = rows;
+  return rows;
+}
+
+export async function predictDemand(routeId) {
+  const allRows = await loadCsv();
+  const routeName = ROUTES.find((r) => r.id === routeId)?.name ?? 'Ruta A';
+  const routeRows = allRows
+    .filter((r) => r.ruta === routeName)
+    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+  // last 31 rows: 30 for input + 1 for the "real" future value
+  const recent = routeRows.slice(-31);
+  if (recent.length < 31) {
+    throw new Error(`No hay suficientes datos históricos para ${routeName}`);
+  }
+
+  // build 30×4 normalized sequence from first 30 rows
+  const sequence = recent.slice(0, 30).map((r) => [
+    normFeature(r.dia_semana, 0),
+    normFeature(r.mes, 1),
+    normFeature(r.festivo, 2),
+    (r.pasajeros - PAS_MIN) / (PAS_MAX - PAS_MIN),
+  ]);
+
+  // clima_id comes from the prediction day (31st row)
+  const climaId = CLIMA_MAP[recent[30].clima] ?? 1;
+
+  const apiResult = await fetchDemandPrediction(sequence, routeId, climaId);
+  const predictedAbs = apiResult.prediccion_pasajeros;
+
+  // build 30-day chart data
+  const days = [];
   for (let i = 0; i < 30; i++) {
-    const date = new Date(now);
-    date.setDate(date.getDate() + i);
-    const real = Math.round(base + (Math.random() - 0.5) * base * 0.3);
-    const predicted = Math.round(base + (Math.random() - 0.5) * base * 0.18);
+    const date = new Date(recent[i].fecha);
+    const real = recent[i].pasajeros;
+    const predicted = i < 29 ? real : Math.round(predictedAbs);
     days.push({
       day: i + 1,
       date: date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
       real,
       predicted,
     });
-    base += (Math.random() - 0.5) * 600;
-    base = Math.max(800, base);
   }
 
   const rmse = Math.round(
-    Math.sqrt(days.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / days.length)
+    Math.sqrt(days.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / days.length),
   );
   const mae = Math.round(
-    days.reduce((sum, d) => sum + Math.abs(d.real - d.predicted), 0) / days.length
+    days.reduce((sum, d) => sum + Math.abs(d.real - d.predicted), 0) / days.length,
   );
-
-  const routeName = ROUTES.find((r) => r.id === routeId)?.name ?? 'Ruta desconocida';
 
   return { days, rmse, mae, routeName };
 }
@@ -91,6 +145,4 @@ export const FEATURE_IMPORTANCE = [
   { name: "Periodo (30/90 Días)", key: "time_period", importance: 0.010 },
 ];
 
-export async function checkServerHealth() {
-  return true;
-}
+export { checkServerHealth } from '../services/api';
