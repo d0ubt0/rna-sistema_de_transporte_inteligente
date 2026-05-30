@@ -6,6 +6,7 @@ import joblib
 import torch
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+API_DIR = os.path.dirname(os.path.abspath(__file__))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
@@ -14,7 +15,7 @@ from src.module1_demand.model import TransportLSTM
 # ============================================================
 # FUNCIÓN DE CARGA GLOBAL
 # ============================================================
-MODEL_DIR = os.path.join("models", "demand")
+MODEL_DIR = os.path.join(API_DIR, "models", "demand")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Variables globales para el Singleton
