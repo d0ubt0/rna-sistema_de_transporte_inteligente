@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import demand, distraction
+from api.routers import demand, distraction
 
 app = FastAPI(
     title="Sistema Inteligente de Transporte",
