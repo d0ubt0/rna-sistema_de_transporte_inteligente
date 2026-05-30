@@ -6,6 +6,7 @@
  * Incluye CTA para explorar el sistema de transporte inteligente.
  */
 import { ArrowDown, Shield, Brain } from 'lucide-react';
+import { createElement } from 'react';
 
 export default function Hero({ serverStatus }) {
   const scrollToModules = () => {
@@ -81,13 +82,13 @@ export default function Hero({ serverStatus }) {
           {[
             { icon: Shield, label: 'Predicción Demanda', desc: 'Series de Tiempo' },
             { icon: Brain, label: 'Clasificación Conductores', desc: 'Visión por Computadora' },
-          ].map(({ icon: Icon, label, desc }) => (
+          ].map(({ icon, label, desc }) => (
             <div
               key={label}
               className="glass rounded-2xl p-6 flex items-center gap-4 hover:bg-white/5 transition-all group"
             >
               <div className="w-12 h-12 rounded-xl bg-brand-600/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Icon className="w-6 h-6 text-brand-400" />
+                {createElement(icon, { className: 'w-6 h-6 text-brand-400' })}
               </div>
               <div className="text-left">
                 <p className="font-semibold text-white">{label}</p>

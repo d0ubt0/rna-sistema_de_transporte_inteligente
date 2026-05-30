@@ -1,5 +1,9 @@
 .venv
 .venv/**
+api/.venv
+api/.venv/**
+**/.venv
+**/.venv/**
 .git
 .git/**
 .gitignore

@@ -1,4 +1,4 @@
-import { fetchDemandPrediction } from '../services/api';
+import { fetchDemandPrediction, fetchDriverClassification } from '../services/api';
 
 export const ROUTES = [
   { id: 0, name: 'Ruta A' },
@@ -116,20 +116,30 @@ export async function predictDemand(routeId) {
 }
 
 export const DRIVER_CLASSES = [
-  { id: 'safe', label: 'Conducción Segura', icon: '✅', color: '#b8bb26' },
-  { id: 'phone', label: 'Uso de Teléfono Móvil', icon: '📱', color: '#fb4934' },
-  { id: 'drowsy', label: 'Somnolencia', icon: '😴', color: '#fe8019' },
-  { id: 'eating', label: 'Comiendo o Bebiendo', icon: '🍔', color: '#fabd2f' },
-  { id: 'looking', label: 'Mirando a los Lados', icon: '👀', color: '#d3869b' },
-  { id: 'radio', label: 'Ajustando Radio', icon: '🎵', color: '#8ec07c' },
+  { id: 'safe_driving', label: 'Conducción Segura', icon: '✅', color: '#b8bb26' },
+  { id: 'talking_phone', label: 'Hablando por Teléfono', icon: '📱', color: '#fb4934' },
+  { id: 'texting_phone', label: 'Escribiendo en Teléfono', icon: '💬', color: '#fe8019' },
+  { id: 'turning', label: 'Mirando a los Lados', icon: '👀', color: '#d3869b' },
+  { id: 'other_activities', label: 'Otras Actividades', icon: '⚠️', color: '#fabd2f' },
 ];
 
-export function classifyDriver() {
-  const idx = Math.floor(Math.random() * DRIVER_CLASSES.length);
-  const driverClass = DRIVER_CLASSES[idx];
-  const confidence = Math.round((0.72 + Math.random() * 0.22) * 100) / 100;
-  const latency = 1500 + Math.random() * 1000;
-  return { ...driverClass, confidence, latency };
+export async function classifyDriver(file) {
+  const apiResult = await fetchDriverClassification(file);
+  const driverClass = DRIVER_CLASSES.find((dc) => dc.id === apiResult.predicted_label) ?? {
+    id: apiResult.predicted_label,
+    label: apiResult.predicted_label,
+    icon: '⚠️',
+    color: '#fabd2f',
+  };
+
+  return {
+    ...driverClass,
+    confidence: apiResult.confidence,
+    filename: apiResult.filename,
+    probabilities: apiResult.probabilities,
+    preventiveMeasure: apiResult.preventive_measure,
+    predictedLabel: apiResult.predicted_label,
+  };
 }
 
 export const DESTINATIONS = [
@@ -145,7 +155,7 @@ export const DESTINATIONS = [
   { id: 'd10', name: 'Mercado Municipal', icon: '🏪', match: 80, category: 'Comercio' },
 ];
 
-export function recommendDestinations(_clientId) {
+export function recommendDestinations() {
   const shuffled = [...DESTINATIONS].sort(() => Math.random() - 0.5);
   const numRecs = 3 + Math.floor(Math.random() * 3);
   return shuffled.slice(0, numRecs).map((d) => ({

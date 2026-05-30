@@ -42,16 +42,20 @@ export default function App() {
     }, 100);
   }, []);
 
-  const handleClassifyDriver = useCallback(async (fileName, tab) => {
+  const handleClassifyDriver = useCallback(async (file, tab) => {
     setModuleTab(tab || 'classification');
     setIsProcessing(true);
-    const result = classifyDriver();
-    await new Promise((r) => setTimeout(r, result.latency));
-    setClassificationResult(result);
-    setIsProcessing(false);
-    setTimeout(() => {
-      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    try {
+      const result = await classifyDriver(file);
+      setClassificationResult(result);
+    } catch {
+      setClassificationResult(null);
+    } finally {
+      setIsProcessing(false);
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   }, []);
 
   const handleRecommendDestinations = useCallback(async (clientId, tab) => {

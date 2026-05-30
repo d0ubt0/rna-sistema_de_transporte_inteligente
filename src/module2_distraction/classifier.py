@@ -41,7 +41,11 @@ class DriverDistractionClassifier:
         self.device = torch.device(device) if device else torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         )
-        checkpoint = torch.load(self.checkpoint_path, map_location=self.device)
+        checkpoint = torch.load(
+            self.checkpoint_path,
+            map_location=self.device,
+            weights_only=True,
+        )
         metadata = checkpoint.get("metadata", {})
         self.class_names = metadata["class_names"]
         self.image_size = int(metadata.get("image_size", 224))

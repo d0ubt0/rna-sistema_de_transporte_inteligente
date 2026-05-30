@@ -5,7 +5,8 @@
  * Enlaces a documentación técnica, reporte de 11 capítulos,
  * repositorio y recursos del proyecto de transporte inteligente.
  */
-import { FileText, PlayCircle, Code, ExternalLink } from 'lucide-react';
+import { FileText, Code, ExternalLink } from 'lucide-react';
+import { createElement } from 'react';
 
 const resources = [
   {
@@ -54,7 +55,7 @@ export default function Resources({ onToggleDocs, showDocs }) {
 
         {/* Resource cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {resources.map(({ id, icon: Icon, title, description, link, linkLabel, color, badge }) => (
+          {resources.map(({ id, icon, title, description, link, linkLabel, color, badge }) => (
             <a
               key={title}
               href={link}
@@ -73,7 +74,7 @@ export default function Resources({ onToggleDocs, showDocs }) {
                     group-hover:scale-110 transition-transform duration-300"
                   style={{ backgroundColor: `${color}15` }}
                 >
-                  <Icon className="w-6 h-6" style={{ color }} />
+                  {createElement(icon, { className: 'w-6 h-6', style: { color } })}
                 </div>
                 <span
                   className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"

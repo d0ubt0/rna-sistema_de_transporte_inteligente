@@ -33,6 +33,21 @@ export async function fetchDemandPrediction(
   return res.json();
 }
 
+export async function fetchDriverClassification(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${API_BASE}/distraction/predict`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Error ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function checkServerHealth() {
   try {
     const res = await fetch(`${API_BASE}/`);

@@ -5,6 +5,7 @@
  * Explica los tres módulos del sistema de transporte inteligente.
  */
 import { BookOpen, Brain, Cpu, Database } from 'lucide-react';
+import { createElement } from 'react';
 
 const features = [
   {
@@ -57,7 +58,7 @@ export default function AboutModel() {
 
         {/* Feature grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {features.map(({ icon: Icon, title, description }) => (
+          {features.map(({ icon, title, description }) => (
             <div
               key={title}
               className="glass rounded-2xl p-6 hover:bg-white/5 transition-all duration-300 group
@@ -65,7 +66,7 @@ export default function AboutModel() {
             >
               <div className="w-12 h-12 rounded-xl bg-brand-600/15 flex items-center justify-center mb-4
                 group-hover:bg-brand-600/25 group-hover:scale-110 transition-all duration-300">
-                <Icon className="w-6 h-6 text-brand-400" />
+                {createElement(icon, { className: 'w-6 h-6 text-brand-400' })}
               </div>
               <h3 className="font-bold text-white mb-2">{title}</h3>
               <p className="text-sm text-surface-200/60 leading-relaxed">{description}</p>

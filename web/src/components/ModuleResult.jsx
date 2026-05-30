@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { createElement, forwardRef } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -39,13 +39,13 @@ const ChartTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const MetricCard = ({ icon: Icon, label, value, color }) => (
+const MetricCard = ({ icon, label, value, color }) => (
   <div className="glass rounded-2xl p-5 flex items-center gap-4 hover:bg-white/5 transition-all">
     <div
       className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
       style={{ backgroundColor: `${color}20` }}
     >
-      <Icon className="w-6 h-6" style={{ color }} />
+      {createElement(icon, { className: 'w-6 h-6', style: { color } })}
     </div>
     <div>
       <p className="text-xs text-surface-200/50 font-medium uppercase tracking-wider">{label}</p>
@@ -151,8 +151,11 @@ const DemandResult = ({ result }) => {
 
 const ClassificationResult = ({ result }) => {
   if (!result) return null;
-  const { label, icon, color, confidence } = result;
+  const { label, icon, color, confidence, filename, preventiveMeasure, probabilities } = result;
   const confidencePercent = Math.round(confidence * 100);
+  const probabilityRows = Object.entries(probabilities ?? {})
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5);
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -200,8 +203,48 @@ const ClassificationResult = ({ result }) => {
             El modelo CNN ha analizado la imagen del conductor y asignado la categoría
             con un nivel de confianza del {confidencePercent}%.
           </p>
+
+          {filename && (
+            <p className="text-xs text-surface-200/30 max-w-md">
+              Archivo analizado: {filename}
+            </p>
+          )}
+
+          {preventiveMeasure && (
+            <div className="w-full max-w-2xl rounded-2xl border border-surface-700/50 bg-surface-900/40 p-4 text-left">
+              <p className="text-xs text-surface-200/50 font-medium uppercase tracking-wider mb-2">
+                Medida preventiva sugerida
+              </p>
+              <p className="text-sm text-surface-200/80">{preventiveMeasure}</p>
+            </div>
+          )}
         </div>
       </div>
+
+      {probabilityRows.length > 0 && (
+        <div className="glass rounded-3xl p-6">
+          <h4 className="text-sm font-bold text-white mb-4">Probabilidades por clase</h4>
+          <div className="space-y-3">
+            {probabilityRows.map(([className, value]) => (
+              <div key={className} className="space-y-1.5">
+                <div className="flex justify-between gap-4 text-xs">
+                  <span className="text-surface-200/70">{className}</span>
+                  <span className="font-semibold text-white">{Math.round(value * 100)}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-surface-900/60 overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${Math.round(value * 100)}%`,
+                      background: `linear-gradient(90deg, ${color}88, ${color})`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

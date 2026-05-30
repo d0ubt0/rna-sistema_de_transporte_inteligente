@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { createElement, useState, useRef, useCallback } from 'react';
 import {
   Calculator,
   RotateCcw,
@@ -26,7 +26,7 @@ export default function SystemForm({
   const [tab, setTab] = useState(activeModule || 'demand');
   const [selectedRoute, setSelectedRoute] = useState(0);
   const [dragOver, setDragOver] = useState(false);
-  const [fileName, setFileName] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [clientId, setClientId] = useState('');
   const fileInputRef = useRef(null);
 
@@ -52,7 +52,7 @@ export default function SystemForm({
     setDragOver(false);
     const file = e.dataTransfer?.files?.[0] || e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      setFileName(file.name);
+      setSelectedFile(file);
     }
   };
 
@@ -65,12 +65,12 @@ export default function SystemForm({
 
   const handleClassify = (e) => {
     e.preventDefault();
-    if (!fileName) return;
-    if (onClassifyDriver) onClassifyDriver(fileName, 'classification');
+    if (!selectedFile) return;
+    if (onClassifyDriver) onClassifyDriver(selectedFile, 'classification');
   };
 
   const handleClassifyReset = () => {
-    setFileName(null);
+    setSelectedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -85,7 +85,7 @@ export default function SystemForm({
   return (
     <div className="space-y-6">
       <div className="flex border-b border-surface-700/50">
-        {TABS.map(({ id, label, icon: Icon }) => (
+        {TABS.map(({ id, label, icon }) => (
           <button
             key={id}
             type="button"
@@ -96,7 +96,7 @@ export default function SystemForm({
                 : 'border-transparent text-surface-200/60 hover:text-surface-200 hover:border-surface-200/30'
             }`}
           >
-            <Icon className="w-4 h-4" />
+            {createElement(icon, { className: 'w-4 h-4' })}
             <span className="hidden sm:inline">{label}</span>
           </button>
         ))}
@@ -174,7 +174,7 @@ export default function SystemForm({
               ${
                 dragOver
                   ? 'border-brand-500 bg-brand-500/10'
-                  : fileName
+                  : selectedFile
                     ? 'border-brand-500/40 bg-brand-500/5'
                     : 'border-surface-700/50 hover:border-surface-200/30 hover:bg-white/5'
               }`}
@@ -186,13 +186,13 @@ export default function SystemForm({
               className="hidden"
               onChange={handleFileDrop}
             />
-            {fileName ? (
+            {selectedFile ? (
               <div className="flex flex-col items-center gap-3">
                 <div className="w-16 h-16 rounded-2xl bg-brand-600/20 flex items-center justify-center">
                   <FileImage className="w-8 h-8 text-brand-400" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">{fileName}</p>
+                  <p className="text-white font-medium">{selectedFile.name}</p>
                   <p className="text-xs text-surface-200/40 mt-1">
                     Haz clic o arrastra para cambiar la imagen
                   </p>
@@ -230,9 +230,9 @@ export default function SystemForm({
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               type="submit"
-              disabled={isProcessing || !fileName}
+              disabled={isProcessing || !selectedFile}
               className={`btn-primary flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold text-lg transition-all duration-300 cursor-pointer ${
-                isProcessing || !fileName
+                isProcessing || !selectedFile
                   ? 'bg-brand-700/50 text-brand-200/50 cursor-wait'
                   : 'bg-gradient-to-r from-brand-600 to-brand-500 text-white hover:from-brand-500 hover:to-brand-400 hover:shadow-xl hover:shadow-brand-500/20 hover:scale-[1.02]'
               }`}
