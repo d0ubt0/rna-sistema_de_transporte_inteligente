@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
@@ -96,6 +94,7 @@ def print_metrics_table(resultados, reals_real, preds_real):
 
 
 def plot_predictions(resultados, save_path=None):
+    import matplotlib.pyplot as plt
     num_rutas = len(resultados)
 
     fig, axes = plt.subplots(
@@ -153,6 +152,7 @@ def plot_predictions(resultados, save_path=None):
 
 
 def plot_metrics_comparison(df_metricas, save_path=None):
+    import matplotlib.pyplot as plt
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
 
     metricas = ["rmse", "mae", "mape"]
@@ -211,6 +211,8 @@ def plot_metrics_comparison(df_metricas, save_path=None):
 
 
 def plot_heatmap_error(resultados, save_path=None, n_muestras=100):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
     n = min(
         n_muestras,
         min(len(r["y_real"]) for r in resultados),

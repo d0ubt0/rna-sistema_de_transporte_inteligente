@@ -186,12 +186,16 @@ def preprocess_pipeline(
     csv_path,
     pct_train=0.80,
     save=True,
+    max_year=None,
+    output_dir="demand_prediction",
 ):
     """
     Pipeline completo.
     """
 
     df = load_data(csv_path)
+    if max_year is not None:
+        df = df[df["fecha"].dt.year <= max_year]
 
     (
         df,
@@ -202,7 +206,7 @@ def preprocess_pipeline(
     (
         train_df,
         test_df,
-    ) = temporal_split(df,pct_train=pct_train,)
+    ) = temporal_split(df,pct_train=pct_train,) # type: ignore
 
     (
         train_df,
@@ -220,6 +224,7 @@ def preprocess_pipeline(
             target_scaler,
             route_encoder,
             clima_encoder,
+            output_dir=output_dir,
         )
 
     feature_cols = (

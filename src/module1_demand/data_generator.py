@@ -1,3 +1,4 @@
+import os
 import random
 from datetime import datetime, timedelta
 
@@ -148,7 +149,7 @@ for i, fecha in enumerate(todas_fechas):
                 break
 
 
-def generate_data(output_csv="demanda_transporte.csv", verbose=True):
+def generate_data(output_csv="demanda_transporte.csv", web_output_csv=None, verbose=True):
     registros = []
 
     for ruta in RUTAS:
@@ -256,6 +257,14 @@ def generate_data(output_csv="demanda_transporte.csv", verbose=True):
 
     if verbose:
         print(f"\nDataset sintético guardado como: {output_csv}")
+
+    if web_output_csv:
+        os.makedirs(os.path.dirname(web_output_csv), exist_ok=True)
+        df.to_csv(web_output_csv, index=False)
+        if verbose:
+            print(f"Dataset sintético guardado como: {web_output_csv}")
+
+    if verbose:
         print("\n" + "=" * 60)
         print("RESUMEN ESTADÍSTICO")
         print("=" * 60)
@@ -266,3 +275,7 @@ def generate_data(output_csv="demanda_transporte.csv", verbose=True):
         print(df.groupby("ruta")["pasajeros"].mean().sort_values(ascending=False))
 
     return df
+
+
+if __name__ == "__main__":
+    generate_data(web_output_csv="web/public/data/demanda_transporte.csv")
