@@ -4,6 +4,8 @@ __pycache__
 data/raw/*
 data/processed/*
 models/*
+!models/demand/
+!models/demand/*
 !models/module2_distraction/
 models/module2_distraction/evaluation/examples/correct/
 models/module2_distraction/evaluation/examples/incorrect/

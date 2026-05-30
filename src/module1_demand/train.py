@@ -16,7 +16,7 @@ if __name__ == "__main__":
     generate_data(DATA_PATH, web_output_csv="web/public/data/demanda_transporte.csv")
 
     print("Preprocesando...")
-    pipe = preprocess_pipeline(DATA_PATH, save=True, max_year=2026, output_dir="api/models/demand")
+    pipe = preprocess_pipeline(DATA_PATH, save=True, max_year=2026, output_dir="models/demand")
 
     print("Construyendo secuencias...")
     X_train, routes_train, climas_train, y_train = build_sequences(
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     history = train_model(
         model, train_loader, test_loader, device,
         epochs=EPOCHS, lr=LR,
-        output_dir="api/models/demand"
+        output_dir="models/demand"
     )
 
     print("Entrenamiento completado.")

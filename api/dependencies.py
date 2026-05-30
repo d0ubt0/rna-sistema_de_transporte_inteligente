@@ -17,7 +17,7 @@ from src.module1_demand.model import TransportLSTM
 # ============================================================
 # FUNCIÓN DE CARGA GLOBAL
 # ============================================================
-MODEL_DIR = os.path.join(API_DIR, "models", "demand")
+MODEL_DIR = os.path.join(ROOT_DIR, "models", "demand")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Variables globales para el Singleton
@@ -60,8 +60,6 @@ def get_distraction_classifier():
             from src.module2_distraction.classifier import DriverDistractionClassifier
 
             checkpoint_path = ROOT_DIR / "models" / "module2_distraction" / "best_model.pth"
-            if not checkpoint_path.exists():
-                checkpoint_path = ROOT_DIR / "api" / "models" / "module2_distraction" / "best_model.pth"
             if not checkpoint_path.exists():
                 return None
             _distraction_classifier = DriverDistractionClassifier(
