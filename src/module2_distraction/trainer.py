@@ -9,6 +9,10 @@ import torch
 from torch import nn
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+try:
+    from tqdm.auto import tqdm
+except ImportError:  # pragma: no cover - fallback for minimal environments
+    tqdm = None
 
 from src.shared.base_trainer import BaseTrainer, TrainingResult
 from src.shared.metrics import classification_metrics
@@ -83,8 +87,20 @@ class DistractionTrainer(BaseTrainer):
         best_model_path = self.output_dir / "best_model.pth"
 
         for epoch in range(1, self.config.epochs + 1):
-            train_loss = self._train_one_epoch(model, data.train_loader, criterion, optimizer)
-            val_loss, y_true, y_pred = self._predict_epoch(model, data.val_loader, criterion)
+            print(f"Epoch {epoch}/{self.config.epochs} - entrenando...")
+            train_loss = self._train_one_epoch(
+                model,
+                data.train_loader,
+                criterion,
+                optimizer,
+                epoch,
+            )
+            val_loss, y_true, y_pred = self._predict_epoch(
+                model,
+                data.val_loader,
+                criterion,
+                epoch,
+            )
             val_metrics = classification_metrics(y_true, y_pred, labels=data.class_names)
             val_f1 = val_metrics["f1_score"]
             scheduler.step(val_f1)
@@ -100,6 +116,12 @@ class DistractionTrainer(BaseTrainer):
             }
             history.append(row)
             self._save_history(history)
+            print(
+                "Epoch "
+                f"{epoch}/{self.config.epochs} - "
+                f"loss={train_loss:.4f} val_loss={val_loss:.4f} "
+                f"val_acc={val_metrics['accuracy']:.4f} val_f1={val_f1:.4f}"
+            )
 
             if val_f1 > best_f1:
                 best_f1 = val_f1
@@ -156,12 +178,14 @@ class DistractionTrainer(BaseTrainer):
         loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
+        epoch: int,
     ) -> float:
         model.train()
         total_loss = 0.0
         total_samples = 0
+        progress = self._progress_bar(loader, f"Epoch {epoch}/{self.config.epochs} train")
 
-        for images, labels in loader:
+        for images, labels in progress:
             images = images.to(self.device)
             labels = labels.to(self.device)
             optimizer.zero_grad(set_to_none=True)
@@ -172,6 +196,8 @@ class DistractionTrainer(BaseTrainer):
             batch_size = images.size(0)
             total_loss += loss.item() * batch_size
             total_samples += batch_size
+            if tqdm is not None:
+                progress.set_postfix(loss=f"{total_loss / max(total_samples, 1):.4f}")
 
         return total_loss / max(total_samples, 1)
 
@@ -180,15 +206,17 @@ class DistractionTrainer(BaseTrainer):
         model: torch.nn.Module,
         loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
+        epoch: int,
     ) -> tuple[float, list[int], list[int]]:
         model.eval()
         total_loss = 0.0
         total_samples = 0
         y_true: list[int] = []
         y_pred: list[int] = []
+        progress = self._progress_bar(loader, f"Epoch {epoch}/{self.config.epochs} val")
 
         with torch.no_grad():
-            for images, labels in loader:
+            for images, labels in progress:
                 images = images.to(self.device)
                 labels = labels.to(self.device)
                 logits = model(images)
@@ -199,6 +227,8 @@ class DistractionTrainer(BaseTrainer):
                 total_samples += batch_size
                 y_true.extend(labels.cpu().tolist())
                 y_pred.extend(predicted.cpu().tolist())
+                if tqdm is not None:
+                    progress.set_postfix(loss=f"{total_loss / max(total_samples, 1):.4f}")
 
         return total_loss / max(total_samples, 1), y_true, y_pred
 
@@ -208,6 +238,21 @@ class DistractionTrainer(BaseTrainer):
             writer = csv.DictWriter(file, fieldnames=list(history[0].keys()))
             writer.writeheader()
             writer.writerows(history)
+
+    def _progress_bar(
+        self,
+        loader: torch.utils.data.DataLoader,
+        description: str,
+    ):
+        if tqdm is None:
+            return loader
+        return tqdm(
+            loader,
+            desc=description,
+            total=len(loader),
+            unit="batch",
+            leave=False,
+        )
 
 
 def train_distraction_model(config: DistractionTrainingConfig) -> TrainingResult:

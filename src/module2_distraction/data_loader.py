@@ -11,6 +11,7 @@ from torchvision.datasets import ImageFolder
 from .augmentation import build_eval_transforms, build_train_transforms
 
 
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 TRAIN_DIR_NAMES = ("train", "training", "Train", "Training")
 VAL_DIR_NAMES = ("val", "valid", "validation", "Val", "Validation")
 TEST_DIR_NAMES = ("test", "testing", "Test", "Testing")
@@ -44,6 +45,34 @@ def _find_child(root: Path, candidates: tuple[str, ...]) -> Path | None:
     return None
 
 
+def _contains_images(path: Path) -> bool:
+    return any(
+        child.is_file() and child.suffix.lower() in IMAGE_EXTENSIONS
+        for child in path.iterdir()
+    )
+
+
+def _looks_like_imagefolder_root(path: Path) -> bool:
+    children = [child for child in path.iterdir() if child.is_dir()]
+    if not children:
+        return False
+    if _find_child(path, TRAIN_DIR_NAMES + VAL_DIR_NAMES + TEST_DIR_NAMES) is not None:
+        return True
+    return sum(_contains_images(child) for child in children) >= 2
+
+
+def resolve_dataset_root(root: Path) -> Path:
+    """Skip common one-folder wrappers produced by Kaggle zip extraction."""
+    current = root
+    while not _looks_like_imagefolder_root(current):
+        children = [child for child in current.iterdir() if child.is_dir()]
+        files = [child for child in current.iterdir() if child.is_file()]
+        if len(children) != 1 or files:
+            break
+        current = children[0]
+    return current
+
+
 def _imagefolder(root: Path, image_size: int, train: bool) -> ImageFolder:
     transform = build_train_transforms(image_size) if train else build_eval_transforms(image_size)
     return ImageFolder(root=str(root), transform=transform)
@@ -53,6 +82,7 @@ def create_data_loaders(config: DistractionDataConfig) -> DistractionDataModule:
     root = Path(config.data_dir)
     if not root.exists():
         raise FileNotFoundError(f"No existe el directorio del dataset: {root}")
+    root = resolve_dataset_root(root)
 
     train_dir = _find_child(root, TRAIN_DIR_NAMES)
     val_dir = _find_child(root, VAL_DIR_NAMES)

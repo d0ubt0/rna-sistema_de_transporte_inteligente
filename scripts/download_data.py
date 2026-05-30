@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import subprocess
+import sys
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -15,6 +16,8 @@ def download_dataset(output_dir: str) -> Path:
     output_path.mkdir(parents=True, exist_ok=True)
 
     command = [
+        sys.executable,
+        "-m",
         "kaggle",
         "datasets",
         "download",
@@ -23,7 +26,17 @@ def download_dataset(output_dir: str) -> Path:
         "-p",
         str(output_path),
     ]
-    subprocess.run(command, check=True)
+    try:
+        subprocess.run(command, check=True)
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "No esta instalada la CLI de Kaggle. Ejecuta: pip install kaggle"
+        ) from exc
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(
+            "Kaggle no pudo descargar el dataset. Verifica que kaggle.json exista en "
+            "%USERPROFILE%\\.kaggle\\kaggle.json y que aceptaste las condiciones del dataset."
+        ) from exc
 
     zip_files = sorted(output_path.glob("*.zip"), key=lambda path: path.stat().st_mtime)
     if not zip_files:
