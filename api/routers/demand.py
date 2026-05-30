@@ -1,7 +1,7 @@
 
 import numpy as np
 import torch
-from dependencies import get_demand_model_infra
+from api.dependencies import get_demand_model_infra
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
