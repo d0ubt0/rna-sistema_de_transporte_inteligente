@@ -66,7 +66,7 @@ const DemandResult = ({ result }) => {
           Predicción de Demanda: {routeName}
         </h3>
         <p className="text-sm text-surface-200/40 mb-6">
-          30 días históricos + 30 días predicción del modelo LSTM
+          30 días históricos + pronóstico de los siguientes 30 días
         </p>
 
         <div className="h-72 sm:h-80">
@@ -134,14 +134,14 @@ const DemandResult = ({ result }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <MetricCard
           icon={Target}
-          label="RMSE (Error Cuadrático Medio)"
-          value={rmse.toLocaleString()}
+          label="RMSE de Evaluación"
+          value={rmse == null ? 'Ver entrenamiento' : rmse.toLocaleString()}
           color="#83a598"
         />
         <MetricCard
           icon={Activity}
-          label="MAE (Error Absoluto Medio)"
-          value={mae.toLocaleString()}
+          label="MAE de Evaluación"
+          value={mae == null ? 'Ver entrenamiento' : mae.toLocaleString()}
           color="#8ec07c"
         />
       </div>

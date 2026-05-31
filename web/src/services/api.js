@@ -33,6 +33,31 @@ export async function fetchDemandPrediction(
   return res.json();
 }
 
+export async function fetchDemandForecast(routeId, steps = 30) {
+  const res = await fetch(`${API_BASE}/demand/predict`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      route_id: Number(routeId),
+      steps,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Error ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchDemandMetadata() {
+  const res = await fetch(`${API_BASE}/demand/metadata`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Error ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function fetchDriverClassification(file) {
   const formData = new FormData();
   formData.append('file', file);

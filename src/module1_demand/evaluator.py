@@ -1,5 +1,11 @@
+# type: ignore
+
+import json
+import os
+
 import numpy as np
 import pandas as pd
+import torch
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
@@ -106,11 +112,10 @@ def plot_predictions(resultados, save_path=None):
     if num_rutas == 1:
         axes = [axes]
 
-    for ax, r in zip(axes, resultados):
+    for ax, r in zip(axes, resultados): #type: ignore
         n_puntos = len(r["y_real"])
         x = np.arange(n_puntos)
-
-        ax.plot(x, r["y_real"], label="Real", linewidth=1.2, alpha=0.9)
+        ax.plot(x, r["y_real"], label="Real", linewidth=1.2, alpha=0.9)#type: ignore
         ax.plot(
             x,
             r["y_pred"],
@@ -266,3 +271,159 @@ def build_summary_df(resultados):
     print(df_metricas.to_string(index=False))
 
     return df_metricas
+
+
+def plot_learning_curve(history, save_path=None):
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 4))
+    plt.plot(history["train_loss"], label="Train", linewidth=1.5)
+    plt.plot(history["val_loss"], label="Validation", linewidth=1.5)
+    plt.axvline(
+        len(history["train_loss"]) - 1,
+        color="gray", ls=":", alpha=0.5,
+        label=f"Stop epoch {len(history['train_loss'])}"
+    )
+    plt.title("Curva de Aprendizaje")
+    plt.xlabel("Epoch")
+    plt.ylabel("MSE Loss")
+    plt.legend()
+    plt.yscale("log")
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, bbox_inches="tight", dpi=120)
+
+    plt.show()
+
+    if save_path:
+        print(f"✓ Curva de aprendizaje guardada: {save_path}")
+
+
+def run_evaluation(
+    model,
+    test_loader,
+    device,
+    target_scaler,
+    route_encoder,
+    history=None,
+    output_dir="models/demand",
+):
+    os.makedirs(output_dir, exist_ok=True)
+
+    # --- 1. Inference ---
+    model.eval()
+    all_preds = []
+    all_reals = []
+    all_routes = []
+
+    with torch.no_grad():
+        for X_batch, routes_batch, climas_batch, y_batch in test_loader:
+            X_batch = X_batch.to(device)
+            routes_batch = routes_batch.to(device)
+            climas_batch = climas_batch.to(device)
+
+            outputs = model(X_batch, routes_batch, climas_batch)
+            all_preds.extend(outputs.cpu().numpy().flatten())
+            all_reals.extend(y_batch.numpy().flatten())
+            all_routes.extend(routes_batch.cpu().numpy().flatten())
+
+    all_preds = np.array(all_preds)
+    all_reals = np.array(all_reals)
+    all_routes = np.array(all_routes)
+
+    # --- 2. Denormalize ---
+    reals_real = denormalize(all_reals, target_scaler)
+    preds_real = denormalize(all_preds, target_scaler)
+
+    # --- 3. Metrics per route ---
+    resultados = compute_metrics_by_route(
+        all_preds, all_reals, all_routes, route_encoder,
+        target_scaler=target_scaler,
+    )
+
+    # --- 4. Global metrics ---
+    rmse_g, mae_g, mape_g = print_metrics_table(resultados, reals_real, preds_real)
+
+    # --- 5. Summary DataFrame ---
+    df_metricas = build_summary_df(resultados)
+
+    # --- 6. Save metrics JSON ---
+    metrics_dict = {
+        "global": {
+            "rmse": round(float(rmse_g), 2),
+            "mae": round(float(mae_g), 2),
+            "mape": round(float(mape_g), 2),
+        },
+        "por_ruta": [
+            {
+                "ruta": r["ruta"],
+                "route_id": int(r["route_id"]),
+                "rmse": round(float(r["rmse"]), 2),
+                "mae": round(float(r["mae"]), 2),
+                "mape": round(float(r["mape"]), 2),
+            }
+            for r in resultados
+        ],
+    }
+    metrics_path = os.path.join(output_dir, "metrics.json")
+    with open(metrics_path, "w") as f:
+        json.dump(metrics_dict, f, indent=2)
+    print(f"\n✓ Métricas guardadas: {metrics_path}")
+
+    # --- 8. Save summary CSV ---
+    csv_path = os.path.join(output_dir, "metrics_por_ruta.csv")
+    df_metricas.to_csv(csv_path, index=False)
+    print(f"✓ CSV guardado: {csv_path}")
+
+    # --- 9. Save per-route predictions CSV ---
+    rows = []
+    for r in resultados:
+        for i in range(len(r["y_real"])):
+            rows.append({
+                "ruta": r["ruta"],
+                "route_id": int(r["route_id"]),
+                "muestra": i,
+                "real": round(float(r["y_real"][i]), 2),
+                "prediccion": round(float(r["y_pred"][i]), 2),
+                "error_abs": round(float(abs(r["y_real"][i] - r["y_pred"][i])), 2),
+            })
+    preds_df = pd.DataFrame(rows)
+    preds_csv = os.path.join(output_dir, "predicciones_detalle.csv")
+    preds_df.to_csv(preds_csv, index=False)
+    print(f"✓ Predicciones detalladas guardadas: {preds_csv}")
+
+    # --- 10. Save plots ---
+    plot_predictions(
+        resultados,
+        save_path=os.path.join(output_dir, "prediccion_vs_real_por_ruta.png"),
+    )
+    plot_metrics_comparison(
+        df_metricas,
+        save_path=os.path.join(output_dir, "comparativa_metricas_por_ruta.png"),
+    )
+    plot_heatmap_error(
+        resultados,
+        save_path=os.path.join(output_dir, "heatmap_error_por_ruta.png"),
+    )
+
+    # --- 12. Learning curve (if history provided) ---
+    if history is not None:
+        plot_learning_curve(
+            history,
+            save_path=os.path.join(output_dir, "curva_aprendizaje.png"),
+        )
+        history_csv = os.path.join(output_dir, "training_history.csv")
+        pd.DataFrame(history).to_csv(history_csv, index=False)
+        print(f"✓ Historial de entrenamiento guardado: {history_csv}")
+
+    print("\n" + "=" * 60)
+    print("      EVALUACIÓN COMPLETA — TODOS LOS ARTEFACTOS GUARDADOS")
+    print("=" * 60)
+
+    return {
+        "resultados": resultados,
+        "df_metricas": df_metricas,
+        "reals_real": reals_real,
+        "preds_real": preds_real,
+        "global_metrics": metrics_dict["global"],
+    }

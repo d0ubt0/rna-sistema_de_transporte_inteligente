@@ -79,3 +79,60 @@ def predict(model, test_loader, device):
         np.array(all_reals),
         np.array(all_routes),
     )
+
+
+def forecast_autoregressive(
+    model,
+    sequence,
+    route_id,
+    future_features,
+    future_clima_ids,
+    device,
+):
+    """
+    Pronostica varios pasos usando cada predicción como parte del
+    siguiente contexto temporal.
+
+    sequence:
+        Array (seq_length, 4) normalizado con
+        [dia_semana, mes, festivo, pasajeros].
+    future_features:
+        Array (steps, 3) normalizado con
+        [dia_semana, mes, festivo].
+    future_clima_ids:
+        Array/list (steps,) con el clima esperado de cada día futuro.
+    """
+
+    seq = np.asarray(sequence, dtype=np.float32).copy()
+    future_features = np.asarray(future_features, dtype=np.float32)
+    future_clima_ids = np.asarray(future_clima_ids, dtype=np.int64)
+
+    if seq.ndim != 2 or seq.shape[1] != 4:
+        raise ValueError("sequence debe tener forma (seq_length, 4)")
+
+    if future_features.ndim != 2 or future_features.shape[1] != 3:
+        raise ValueError("future_features debe tener forma (steps, 3)")
+
+    if len(future_features) != len(future_clima_ids):
+        raise ValueError("future_features y future_clima_ids deben tener la misma longitud")
+
+    predictions = []
+    model.eval()
+
+    with torch.no_grad():
+        for step_features, clima_id in zip(future_features, future_clima_ids):
+            seq_tensor = torch.tensor(seq[None, :, :], device=device)
+            route_tensor = torch.tensor([route_id], dtype=torch.long, device=device)
+            clima_tensor = torch.tensor([clima_id], dtype=torch.long, device=device)
+
+            pred_norm = model(seq_tensor, route_tensor, clima_tensor)
+            pred_norm = float(pred_norm.cpu().numpy().flatten()[0])
+            predictions.append(pred_norm)
+
+            new_row = np.array(
+                [step_features[0], step_features[1], step_features[2], pred_norm],
+                dtype=np.float32,
+            )
+            seq = np.concatenate([seq[1:], new_row[None, :]], axis=0)
+
+    return np.array(predictions, dtype=np.float32)

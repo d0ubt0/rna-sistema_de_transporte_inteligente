@@ -16,6 +16,8 @@ def train_model(
     lr=0.001,
     patience=10,
     clip_norm=1.0,
+    weight_decay=1e-4,
+    min_delta=1e-5,
     output_dir="demand_prediction",
     seed=1234,
 ):
@@ -23,8 +25,14 @@ def train_model(
     random.seed(seed)
     torch.manual_seed(seed)
 
-    criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    model.to(device)
+
+    criterion = nn.SmoothL1Loss(beta=0.05)
+    optimizer = torch.optim.AdamW(
+        model.parameters(),
+        lr=lr,
+        weight_decay=weight_decay,
+    )
     scheduler = ReduceLROnPlateau(
         optimizer,
         mode="min",
@@ -91,7 +99,7 @@ def train_model(
 
         scheduler.step(avg_val_loss)
 
-        if avg_val_loss < best_val_loss:
+        if avg_val_loss < best_val_loss - min_delta:
             best_val_loss = avg_val_loss
             patience_counter = 0
 

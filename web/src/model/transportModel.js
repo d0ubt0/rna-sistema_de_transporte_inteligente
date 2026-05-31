@@ -1,4 +1,7 @@
-import { fetchDemandPrediction, fetchDriverClassification } from '../services/api';
+import {
+  fetchDemandForecast,
+  fetchDriverClassification,
+} from '../services/api';
 
 export const ROUTES = [
   { id: 0, name: 'Ruta A' },
@@ -8,83 +11,13 @@ export const ROUTES = [
   { id: 4, name: 'Ruta E' },
 ];
 
-const CLIMA_MAP = { 'Lluvia': 0, 'Nublado': 1, 'Soleado': 2 };
-
-const FS_MIN = [0, 1, 0];
-const FS_MAX = [6, 12, 1];
-const PAS_MIN = 346;
-const PAS_MAX = 4039;
-
-function normFeature(val, colIdx) {
-  return (val - FS_MIN[colIdx]) / (FS_MAX[colIdx] - FS_MIN[colIdx]);
-}
-
-let cachedCsv = null;
-
-async function loadCsv() {
-  if (cachedCsv) return cachedCsv;
-  const res = await fetch('/data/demanda_transporte.csv');
-  const text = await res.text();
-  const lines = text.trim().split('\n');
-  const rows = lines.slice(1).map((line) => {
-    const c = line.split(',');
-    return {
-      fecha: c[0],
-      ruta: c[1],
-      pasajeros: parseInt(c[2], 10),
-      dia_semana: parseInt(c[4], 10),
-      mes: parseInt(c[5], 10),
-      festivo: parseInt(c[6], 10),
-      clima: c[7].trim(),
-    };
-  });
-  cachedCsv = rows;
-  return rows;
-}
-
 export async function predictDemand(routeId) {
-  const allRows = await loadCsv();
-  const routeName = ROUTES.find((r) => r.id === Number(routeId))?.name ?? 'Ruta A';
-  const routeRows = allRows
-    .filter((r) => r.ruta === routeName)
-    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  const apiResult = await fetchDemandForecast(routeId, 30);
+  const historyRows = apiResult.historico ?? [];
+  const forecastRows = apiResult.pronostico ?? [];
+  const routeName = apiResult.ruta ?? ROUTES.find((r) => r.id === Number(routeId))?.name ?? 'Ruta A';
 
-  // need 60 rows: last 30 for input + 30 to predict
-  const recent = routeRows.slice(-60);
-  if (recent.length < 60) {
-    throw new Error(`No hay suficientes datos históricos para ${routeName}`);
-  }
-
-  // first 30 rows = input sequence (30 days before the prediction window)
-  const sequence = recent.slice(0, 30).map((r) => [
-    normFeature(r.dia_semana, 0),
-    normFeature(r.mes, 1),
-    normFeature(r.festivo, 2),
-    (r.pasajeros - PAS_MIN) / (PAS_MAX - PAS_MIN),
-  ]);
-
-  // next 30 rows = target days to predict
-  const targetRows = recent.slice(30, 60);
-
-  // normalized features + clima for each future step
-  const futureFeatures = targetRows.map((r) => [
-    normFeature(r.dia_semana, 0),
-    normFeature(r.mes, 1),
-    normFeature(r.festivo, 2),
-  ]);
-  const futureClimaIds = targetRows.map((r) => CLIMA_MAP[r.clima] ?? 1);
-
-  const apiResult = await fetchDemandPrediction(
-    sequence,
-    routeId,
-    futureClimaIds[0],
-    futureFeatures,
-    futureClimaIds,
-  );
-  const predictedValues = apiResult.predicciones;
-
-  // build 60-day chart: 30 previous real values + 30 real vs predicted
-  const prevDays = recent.slice(0, 30).map((r, i) => {
+  const prevDays = historyRows.map((r, i) => {
     const date = new Date(r.fecha);
     return {
       day: i + 1,
@@ -93,26 +26,18 @@ export async function predictDemand(routeId) {
     };
   });
 
-  const predDays = targetRows.map((r, i) => {
+  const predDays = forecastRows.map((r, i) => {
     const date = new Date(r.fecha);
     return {
       day: i + 31,
       date: date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
-      real: r.pasajeros,
-      predicted: Math.round(predictedValues[i]),
+      predicted: Math.round(r.prediccion),
     };
   });
 
   const days = [...prevDays, ...predDays];
 
-  const rmse = Math.round(
-    Math.sqrt(predDays.reduce((sum, d) => sum + (d.real - d.predicted) ** 2, 0) / predDays.length),
-  );
-  const mae = Math.round(
-    predDays.reduce((sum, d) => sum + Math.abs(d.real - d.predicted), 0) / predDays.length,
-  );
-
-  return { days, rmse, mae, routeName };
+  return { days, rmse: null, mae: null, routeName };
 }
 
 export const DRIVER_CLASSES = [
