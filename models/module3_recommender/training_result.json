@@ -1,0 +1,143 @@
+{
+  "best_model_path": "models\\module3_recommender\\best_model.pth",
+  "metrics_path": "models\\module3_recommender\\evaluation\\metrics.json",
+  "history": [
+    {
+      "epoch": 1.0,
+      "train_loss": 0.6396291530805147,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.5677074877484338
+    },
+    {
+      "epoch": 2.0,
+      "train_loss": 0.5248191279407761,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.559756234726715
+    },
+    {
+      "epoch": 3.0,
+      "train_loss": 0.5039262382430645,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.5769616296717083
+    },
+    {
+      "epoch": 4.0,
+      "train_loss": 0.4945002302067221,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.5817539884979013
+    },
+    {
+      "epoch": 5.0,
+      "train_loss": 0.48534904811075064,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.5797784500098248
+    },
+    {
+      "epoch": 6.0,
+      "train_loss": 0.4745592393814184,
+      "val_precision_at_10": 0.1,
+      "val_recall_at_10": 1.0,
+      "val_ndcg_at_10": 0.5751749235872281
+    }
+  ],
+  "metadata": {
+    "config": {
+      "data_dir": "data/raw/module3_recommender",
+      "output_dir": "models/module3_recommender",
+      "embedding_dim": 64,
+      "hidden_dim": 128,
+      "dropout": 0.2,
+      "batch_size": 256,
+      "epochs": 20,
+      "learning_rate": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 5,
+      "negative_samples": 4,
+      "max_content_categories": 80,
+      "min_positive_rating": null,
+      "seed": 42,
+      "val_split": 0.1,
+      "test_split": 0.1,
+      "device": null
+    },
+    "num_users": 675,
+    "num_items": 684,
+    "content_dim": 21,
+    "best_val_recall_at_10": 1.0,
+    "schema": {
+      "user": "__user_id",
+      "item": "__item_id",
+      "rating": "__rating",
+      "time": "__time"
+    },
+    "source_files": [
+      "data\\raw\\module3_recommender\\Expanded_Destinations.csv",
+      "data\\raw\\module3_recommender\\Final_Updated_Expanded_Reviews.csv",
+      "data\\raw\\module3_recommender\\Final_Updated_Expanded_UserHistory.csv",
+      "data\\raw\\module3_recommender\\Final_Updated_Expanded_Users.csv"
+    ],
+    "history": [
+      {
+        "epoch": 1.0,
+        "train_loss": 0.6396291530805147,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.5677074877484338
+      },
+      {
+        "epoch": 2.0,
+        "train_loss": 0.5248191279407761,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.559756234726715
+      },
+      {
+        "epoch": 3.0,
+        "train_loss": 0.5039262382430645,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.5769616296717083
+      },
+      {
+        "epoch": 4.0,
+        "train_loss": 0.4945002302067221,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.5817539884979013
+      },
+      {
+        "epoch": 5.0,
+        "train_loss": 0.48534904811075064,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.5797784500098248
+      },
+      {
+        "epoch": 6.0,
+        "train_loss": 0.4745592393814184,
+        "val_precision_at_10": 0.1,
+        "val_recall_at_10": 1.0,
+        "val_ndcg_at_10": 0.5751749235872281
+      }
+    ],
+    "test_metrics": {
+      "precision@5": 0.2,
+      "recall@5": 1.0,
+      "hit_rate@5": 1.0,
+      "map@5": 0.4755847953216374,
+      "ndcg@5": 0.6036772288221058,
+      "precision@10": 0.1,
+      "recall@10": 1.0,
+      "hit_rate@10": 1.0,
+      "map@10": 0.4755847953216374,
+      "ndcg@10": 0.6036772288221058,
+      "evaluated_users": 114,
+      "heldout_interactions": 114
+    }
+  }
+}

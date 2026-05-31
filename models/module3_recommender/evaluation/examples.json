@@ -1,0 +1,359 @@
+{
+  "examples": [
+    {
+      "user_id": "15",
+      "heldout_destination": "Kerala Backwaters",
+      "recommendations": [
+        {
+          "rank": 1,
+          "destination_id": "774",
+          "destination": "Kerala Backwaters",
+          "metadata": {
+            "item_key": "774",
+            "Name": "Kerala Backwaters",
+            "State": "Kerala",
+            "Type": "Nature",
+            "Popularity": 8.038663649202402,
+            "BestTimeToVisit": "Sep-Mar"
+          }
+        },
+        {
+          "rank": 2,
+          "destination_id": "327",
+          "destination": "Goa Beaches",
+          "metadata": {
+            "item_key": "327",
+            "Name": "Goa Beaches",
+            "State": "Goa",
+            "Type": "Beach",
+            "Popularity": 8.382390141309063,
+            "BestTimeToVisit": "Nov-Mar"
+          }
+        },
+        {
+          "rank": 3,
+          "destination_id": "961",
+          "destination": "Taj Mahal",
+          "metadata": {
+            "item_key": "961",
+            "Name": "Taj Mahal",
+            "State": "Uttar Pradesh",
+            "Type": "Historical",
+            "Popularity": 8.385107105120452,
+            "BestTimeToVisit": "Nov-Feb"
+          }
+        },
+        {
+          "rank": 4,
+          "destination_id": "255",
+          "destination": "Leh Ladakh",
+          "metadata": {
+            "item_key": "255",
+            "Name": "Leh Ladakh",
+            "State": "Jammu and Kashmir",
+            "Type": "Adventure",
+            "Popularity": 8.59789687012441,
+            "BestTimeToVisit": "Apr-Jun"
+          }
+        },
+        {
+          "rank": 5,
+          "destination_id": "868",
+          "destination": "Jaipur City",
+          "metadata": {
+            "item_key": "868",
+            "Name": "Jaipur City",
+            "State": "Rajasthan",
+            "Type": "City",
+            "Popularity": 8.498230857041534,
+            "BestTimeToVisit": "Oct-Mar"
+          }
+        }
+      ]
+    },
+    {
+      "user_id": "20",
+      "heldout_destination": "Taj Mahal",
+      "recommendations": [
+        {
+          "rank": 1,
+          "destination_id": "454",
+          "destination": "Kerala Backwaters",
+          "metadata": {
+            "item_key": "454",
+            "Name": "Kerala Backwaters",
+            "State": "Kerala",
+            "Type": "Nature",
+            "Popularity": 8.250765565651493,
+            "BestTimeToVisit": "Sep-Mar"
+          }
+        },
+        {
+          "rank": 2,
+          "destination_id": "327",
+          "destination": "Goa Beaches",
+          "metadata": {
+            "item_key": "327",
+            "Name": "Goa Beaches",
+            "State": "Goa",
+            "Type": "Beach",
+            "Popularity": 8.382390141309063,
+            "BestTimeToVisit": "Nov-Mar"
+          }
+        },
+        {
+          "rank": 3,
+          "destination_id": "961",
+          "destination": "Taj Mahal",
+          "metadata": {
+            "item_key": "961",
+            "Name": "Taj Mahal",
+            "State": "Uttar Pradesh",
+            "Type": "Historical",
+            "Popularity": 8.385107105120452,
+            "BestTimeToVisit": "Nov-Feb"
+          }
+        },
+        {
+          "rank": 4,
+          "destination_id": "255",
+          "destination": "Leh Ladakh",
+          "metadata": {
+            "item_key": "255",
+            "Name": "Leh Ladakh",
+            "State": "Jammu and Kashmir",
+            "Type": "Adventure",
+            "Popularity": 8.59789687012441,
+            "BestTimeToVisit": "Apr-Jun"
+          }
+        },
+        {
+          "rank": 5,
+          "destination_id": "868",
+          "destination": "Jaipur City",
+          "metadata": {
+            "item_key": "868",
+            "Name": "Jaipur City",
+            "State": "Rajasthan",
+            "Type": "City",
+            "Popularity": 8.498230857041534,
+            "BestTimeToVisit": "Oct-Mar"
+          }
+        }
+      ]
+    },
+    {
+      "user_id": "21",
+      "heldout_destination": "Kerala Backwaters",
+      "recommendations": [
+        {
+          "rank": 1,
+          "destination_id": "774",
+          "destination": "Kerala Backwaters",
+          "metadata": {
+            "item_key": "774",
+            "Name": "Kerala Backwaters",
+            "State": "Kerala",
+            "Type": "Nature",
+            "Popularity": 8.038663649202402,
+            "BestTimeToVisit": "Sep-Mar"
+          }
+        },
+        {
+          "rank": 2,
+          "destination_id": "327",
+          "destination": "Goa Beaches",
+          "metadata": {
+            "item_key": "327",
+            "Name": "Goa Beaches",
+            "State": "Goa",
+            "Type": "Beach",
+            "Popularity": 8.382390141309063,
+            "BestTimeToVisit": "Nov-Mar"
+          }
+        },
+        {
+          "rank": 3,
+          "destination_id": "961",
+          "destination": "Taj Mahal",
+          "metadata": {
+            "item_key": "961",
+            "Name": "Taj Mahal",
+            "State": "Uttar Pradesh",
+            "Type": "Historical",
+            "Popularity": 8.385107105120452,
+            "BestTimeToVisit": "Nov-Feb"
+          }
+        },
+        {
+          "rank": 4,
+          "destination_id": "255",
+          "destination": "Leh Ladakh",
+          "metadata": {
+            "item_key": "255",
+            "Name": "Leh Ladakh",
+            "State": "Jammu and Kashmir",
+            "Type": "Adventure",
+            "Popularity": 8.59789687012441,
+            "BestTimeToVisit": "Apr-Jun"
+          }
+        },
+        {
+          "rank": 5,
+          "destination_id": "868",
+          "destination": "Jaipur City",
+          "metadata": {
+            "item_key": "868",
+            "Name": "Jaipur City",
+            "State": "Rajasthan",
+            "Type": "City",
+            "Popularity": 8.498230857041534,
+            "BestTimeToVisit": "Oct-Mar"
+          }
+        }
+      ]
+    },
+    {
+      "user_id": "34",
+      "heldout_destination": "Leh Ladakh",
+      "recommendations": [
+        {
+          "rank": 1,
+          "destination_id": "454",
+          "destination": "Kerala Backwaters",
+          "metadata": {
+            "item_key": "454",
+            "Name": "Kerala Backwaters",
+            "State": "Kerala",
+            "Type": "Nature",
+            "Popularity": 8.250765565651493,
+            "BestTimeToVisit": "Sep-Mar"
+          }
+        },
+        {
+          "rank": 2,
+          "destination_id": "327",
+          "destination": "Goa Beaches",
+          "metadata": {
+            "item_key": "327",
+            "Name": "Goa Beaches",
+            "State": "Goa",
+            "Type": "Beach",
+            "Popularity": 8.382390141309063,
+            "BestTimeToVisit": "Nov-Mar"
+          }
+        },
+        {
+          "rank": 3,
+          "destination_id": "961",
+          "destination": "Taj Mahal",
+          "metadata": {
+            "item_key": "961",
+            "Name": "Taj Mahal",
+            "State": "Uttar Pradesh",
+            "Type": "Historical",
+            "Popularity": 8.385107105120452,
+            "BestTimeToVisit": "Nov-Feb"
+          }
+        },
+        {
+          "rank": 4,
+          "destination_id": "255",
+          "destination": "Leh Ladakh",
+          "metadata": {
+            "item_key": "255",
+            "Name": "Leh Ladakh",
+            "State": "Jammu and Kashmir",
+            "Type": "Adventure",
+            "Popularity": 8.59789687012441,
+            "BestTimeToVisit": "Apr-Jun"
+          }
+        },
+        {
+          "rank": 5,
+          "destination_id": "868",
+          "destination": "Jaipur City",
+          "metadata": {
+            "item_key": "868",
+            "Name": "Jaipur City",
+            "State": "Rajasthan",
+            "Type": "City",
+            "Popularity": 8.498230857041534,
+            "BestTimeToVisit": "Oct-Mar"
+          }
+        }
+      ]
+    },
+    {
+      "user_id": "35",
+      "heldout_destination": "Taj Mahal",
+      "recommendations": [
+        {
+          "rank": 1,
+          "destination_id": "454",
+          "destination": "Kerala Backwaters",
+          "metadata": {
+            "item_key": "454",
+            "Name": "Kerala Backwaters",
+            "State": "Kerala",
+            "Type": "Nature",
+            "Popularity": 8.250765565651493,
+            "BestTimeToVisit": "Sep-Mar"
+          }
+        },
+        {
+          "rank": 2,
+          "destination_id": "327",
+          "destination": "Goa Beaches",
+          "metadata": {
+            "item_key": "327",
+            "Name": "Goa Beaches",
+            "State": "Goa",
+            "Type": "Beach",
+            "Popularity": 8.382390141309063,
+            "BestTimeToVisit": "Nov-Mar"
+          }
+        },
+        {
+          "rank": 3,
+          "destination_id": "961",
+          "destination": "Taj Mahal",
+          "metadata": {
+            "item_key": "961",
+            "Name": "Taj Mahal",
+            "State": "Uttar Pradesh",
+            "Type": "Historical",
+            "Popularity": 8.385107105120452,
+            "BestTimeToVisit": "Nov-Feb"
+          }
+        },
+        {
+          "rank": 4,
+          "destination_id": "255",
+          "destination": "Leh Ladakh",
+          "metadata": {
+            "item_key": "255",
+            "Name": "Leh Ladakh",
+            "State": "Jammu and Kashmir",
+            "Type": "Adventure",
+            "Popularity": 8.59789687012441,
+            "BestTimeToVisit": "Apr-Jun"
+          }
+        },
+        {
+          "rank": 5,
+          "destination_id": "393",
+          "destination": "Jaipur City",
+          "metadata": {
+            "item_key": "393",
+            "Name": "Jaipur City",
+            "State": "Rajasthan",
+            "Type": "City",
+            "Popularity": 8.429521721872453,
+            "BestTimeToVisit": "Oct-Mar"
+          }
+        }
+      ]
+    }
+  ]
+}

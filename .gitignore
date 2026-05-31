@@ -18,4 +18,15 @@ models/module2_distraction/evaluation/examples/incorrect/
 !models/module2_distraction/evaluation/classification_report.csv
 !models/module2_distraction/evaluation/examples/
 !models/module2_distraction/evaluation/examples/examples.json
+!models/module3_recommender/
+!models/module3_recommender/metadata.json
+!models/module3_recommender/history.csv
+!models/module3_recommender/training_result.json
+!models/module3_recommender/best_model.pth
+!models/module3_recommender/validation/
+!models/module3_recommender/validation/metrics.json
+!models/module3_recommender/validation/examples.json
+!models/module3_recommender/evaluation/
+!models/module3_recommender/evaluation/metrics.json
+!models/module3_recommender/evaluation/examples.json
 .ipynb_checkpoints
