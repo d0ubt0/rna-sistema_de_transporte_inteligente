@@ -72,3 +72,27 @@ def get_distraction_classifier():
             return None
 
     return _distraction_classifier
+
+
+def get_recommender_model():
+    """Carga el modelo de recomendación una sola vez (Pattern Singleton)."""
+    if not hasattr(get_recommender_model, "_recommender"):
+        try:
+            from src.module3_recommender.recommender import TravelDestinationRecommender
+
+            checkpoint_path = ROOT_DIR / "models" / "module3_recommender" / "best_model.pth"
+            if not checkpoint_path.exists():
+                print(f"❌ Checkpoint de recomendación no encontrado: {checkpoint_path}")
+                get_recommender_model._recommender = None
+                return None
+            get_recommender_model._recommender = TravelDestinationRecommender(
+                checkpoint_path=checkpoint_path,
+                device=DEVICE,
+            )
+            print(f"✓ Modelo de recomendación cargado exitosamente en {DEVICE}")
+        except Exception as e:
+            print(f"❌ Error cargando modelo de recomendación: {e}")
+            get_recommender_model._recommender = None
+            return None
+
+    return get_recommender_model._recommender

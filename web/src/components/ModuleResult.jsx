@@ -56,7 +56,7 @@ const MetricCard = ({ icon, label, value, color }) => (
 
 const DemandResult = ({ result }) => {
   if (!result) return null;
-  const { days, rmse, mae, routeName } = result;
+  const { days, routeName } = result;
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -129,21 +129,6 @@ const DemandResult = ({ result }) => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <MetricCard
-          icon={Target}
-          label="RMSE de Evaluación"
-          value={rmse == null ? 'Ver entrenamiento' : rmse.toLocaleString()}
-          color="#83a598"
-        />
-        <MetricCard
-          icon={Activity}
-          label="MAE de Evaluación"
-          value={mae == null ? 'Ver entrenamiento' : mae.toLocaleString()}
-          color="#8ec07c"
-        />
       </div>
     </div>
   );

@@ -83,3 +83,25 @@ export async function checkServerHealth() {
     return false;
   }
 }
+
+export async function fetchRecommendations(userId, topK = 6) {
+  const params = new URLSearchParams({ user_id: userId, top_k: String(topK) });
+  const res = await fetch(`${API_BASE}/recommender/recommend?${params}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Error ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchRecommenderInfo() {
+  const res = await fetch(`${API_BASE}/recommender/info`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}

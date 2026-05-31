@@ -1,6 +1,7 @@
 import {
   fetchDemandForecast,
   fetchDriverClassification,
+  fetchRecommendations,
 } from '../services/api';
 
 export const ROUTES = [
@@ -77,14 +78,45 @@ export const DESTINATIONS = [
   { id: 'd10', name: 'Mercado Municipal', icon: '🏪', match: 80, category: 'Comercio' },
 ];
 
-export function recommendDestinations() {
-  const shuffled = [...DESTINATIONS].sort(() => Math.random() - 0.5);
-  const numRecs = 3 + Math.floor(Math.random() * 3);
-  return shuffled.slice(0, numRecs).map((d) => ({
-    ...d,
-    match: Math.max(58, d.match - Math.floor(Math.random() * 18)),
-  }));
+export async function recommendDestinations(clientId) {
+  const apiResult = await fetchRecommendations(clientId, 6);
+  const rawRecs = apiResult.recommendations ?? [];
+
+  // Map API response to the format expected by the UI
+  const destinations = rawRecs.map((rec, idx) => {
+    const meta = rec.metadata ?? {};
+    const name = rec.destination ?? `Destino ${rec.destination_id}`;
+    // Derive category from metadata or assign a default
+    const category = meta.Category || meta.category || meta.Type || meta.type || 'General';
+    const icon = categoryIcons[category] || '📍';
+    const match = Math.round(rec.score * 100);
+    const id = rec.destination_id || `rec-${idx}`;
+    return { id, name, icon, match, category };
+  });
+
+  return destinations;
 }
+
+const categoryIcons = {
+  'Cultura': '🏛️',
+  'Turismo': '🌊',
+  'Compras': '🛍️',
+  'Negocios': '🏭',
+  'Recreación': '⛲',
+  'Transporte': '🚌',
+  'Salud': '🏥',
+  'Educación': '🎓',
+  'Deportes': '🏟️',
+  'Comercio': '🏪',
+  'Cultural': '🏛️',
+  'Shopping': '🛍️',
+  'Business': '🏭',
+  'Recreation': '⛲',
+  'Entertainment': '🎭',
+  'Food': '🍽️',
+  'Nature': '🌳',
+  'Beach': '🏖️',
+};
 
 export const FEATURE_IMPORTANCE = [
   { name: "Demanda Histórica", key: "hist_demand", importance: 0.321 },

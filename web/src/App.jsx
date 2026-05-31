@@ -64,9 +64,14 @@ export default function App() {
   const handleRecommendDestinations = useCallback(async (clientId, tab) => {
     setModuleTab(tab || 'recommendation');
     setIsProcessing(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    const destinations = recommendDestinations(clientId);
-    setRecommendationResult({ destinations, clientId });
+    setError(null);
+    try {
+      const destinations = await recommendDestinations(clientId);
+      setRecommendationResult({ destinations, clientId });
+    } catch (err) {
+      setRecommendationResult(null);
+      setError(err?.message || 'Error al obtener recomendaciones');
+    }
     setIsProcessing(false);
     setTimeout(() => {
       resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
